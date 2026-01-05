@@ -1,4 +1,6 @@
-from nltk import FreqDist
+import matplotlib.pyplot as plt
+from joblib.externals.loky.backend.synchronize import Condition
+from nltk import FreqDist, ConditionalFreqDist, download, pos_tag
 from nltk.text import Text
 
 from PIL.EpsImagePlugin import field
@@ -135,15 +137,200 @@ from collections import defaultdict
 
 #10 Define a function supergloss(s) that takes a synset s as its argument and returns a string consisting of the concatenation of the definition of s, and the definitions of all the hypernyms and hyponyms of s.
 
-from nltk.corpus import wordnet as wn
-def supergloss(s):
-    parts = []
-    parts.append(s.definition())
-    for h in s.hypernyms():
-        parts.append(h.definition())
-    for hy in s.hyponyms():
-        parts.append(hy.definition())
-    return " ".join(parts)
-s = wn.synset("car.n.01")
-print(supergloss(s))
+# from nltk.corpus import wordnet as wn
+# def supergloss(s):
+#     parts = []
+#     parts.append(s.definition())
+#     for h in s.hypernyms():
+#         parts.append(h.definition())
+#     for hy in s.hyponyms():
+#         parts.append(hy.definition())
+#     return " ".join(parts)
+# s = wn.synset("car.n.01")
+# print(supergloss(s))
 
+
+#1 Define a conditional frequency distribution over the Names Corpus that allows you to see which initial letters are more frequent for males versus females.
+
+# import nltk
+# nltk.download("names")
+# from nltk.corpus import names
+#
+# cfd = ConditionalFreqDist(
+#     (fileid[:-4],name[0].lower())
+#     for fileid in names.fileids()
+#     for name in names.words(fileid)
+# )
+# print(cfd["female"].most_common(10))
+# print(cfd["male"].most_common(10))
+# cfd.plot()
+# plt.show()
+
+#2 Pick a pair of texts and study the differences between them, in terms of vocabulary, vocabulary richness, genre, etc. Can you find pairs of words that have quite different meanings across the two texts, such as monstrous in Moby Dick and in Sense and Sensibility?
+
+# moby = [ w.lower() for w in  gutenberg.words("melville-moby_dick.txt") if w.isalpha()]
+# sense = [w.lower() for w in gutenberg.words("austen-sense.txt") if w.isalpha()]
+#
+# def stats(tokens):
+#     num_tokens = len(tokens)
+#     num_types = len(set(tokens))
+#     rich = num_tokens / num_types
+#     print(num_tokens)
+#     print(num_types)
+#     print(rich)
+# stats(moby)
+# print(".....")
+# stats(sense)
+
+# #3  What percentage of noun synsets have no hyponyms? You can get all noun synsets using wn.all_synsets('n').
+#
+# import nltk
+# nltk.download("wordnet")
+# from nltk.corpus import wordnet as wn
+#
+# noun_synsets = list(wn.all_synsets('n'))
+# total = len(noun_synsets)
+#
+# no_hyponyms = [ h for h in noun_synsets if len(h.hyponyms()) == 0]
+#
+# print("percentage = ",(100*len(no_hyponyms)/total))
+
+#4 Write a program to generate a table of lexical diversity scores (i.e., token/type ratios). Include the full set of Brown Corpus genres (nltk.corpus.brown.categories()).
+# Which genre has the lowest diversity (greatest number of tokens per type)? Is this what you would have expected?
+
+# from nltk.corpus import brown
+#
+# def token_type_ratio(tokens):
+#     tokens = [w.lower() for w in tokens if w.isalpha()]
+#     return len(tokens)/len(set(tokens))
+#
+# rows = []
+# for genre in brown.categories():
+#     words = brown.words(categories=genre)
+#     ttr = token_type_ratio(words)
+#     rows.append((genre,ttr,len(words)))
+#
+# rows.sort(key= lambda x:x[1],reverse=True)
+#
+# for g,r,c in rows:
+#     print(f"{g:12} | {r:.2f}")
+#
+# print("lowest diversity :",rows[0][0])
+
+#5  Write a function word_freq() that takes a word and the name of a section of the Brown Corpus as arguments, and computes the frequency of the word in that section of the corpus.
+
+# def word_freq(word,name):
+#     tokens = [w.lower() for w in brown.words(categories=name) if w.isalpha()]
+#     return tokens.count(word)/len(tokens)
+# print("Freq of 'government' in news:", word_freq("government", "news"))
+# print("Freq of 'love' in romance:", word_freq("love", "romance"))
+
+#6 Write a program to guess the number of syllables contained in a text, making use of the CMU Pronouncing Dictionary.
+
+# from nltk.corpus import cmudict
+# cmu = cmudict.dict()
+#
+#
+# def count_syllables_in_word(word):
+#     word = word.lower()
+#     if word not in cmu:
+#         return 0
+#
+#     # Take first pronunciation list
+#     pron = cmu[word][0]
+#
+#     # Count vowel phonemes (they end with a digit)
+#     return sum(1 for p in pron if p[-1].isdigit())
+#
+#
+# def estimate_syllables(tokens):
+#     total = 0
+#     unkown =0
+#
+#     for w in tokens:
+#         w = "".join(ch for ch in w if ch.isalpha())
+#         if not w:
+#             continue
+#     s = count_syllables_in_word(w)
+#     if s == 0:
+#         unkown +=1
+#     total +=s
+#     return total , unkown
+#
+# tokens = brown.words(categories="news")[:2000]   # sample first 2000 tokens to keep it fast
+# total_syl, unknown_count = estimate_syllables(tokens)
+#
+# print("Estimated syllables:", total_syl)
+# print("Unknown words (not in CMU dict):", unknown_count)
+
+#7 Define a function hedge(text) that processes a text and produces a new version with the word 'like' between every third word.
+#
+# def hedge(text):
+#     result = []
+#
+#     for  i , w  in enumerate(text,start=1):
+#         result.append(w)
+#         if i % 3 == 0:
+#             result.append("like")
+#     return result
+# sample = ["natural", "language", "processing", "is", "fun", "today"]
+# print("Hedged:", hedge(sample))
+
+#Advanced Tasks
+#1 Define a function find_language() that takes a string as its argument and returns a list of languages that have that string as a word. Use the udhr corpus and limit your searches to files in the Latin-1 encoding.
+#
+# import nltk
+# nltk.download("udhr")
+# from nltk.corpus import udhr
+#
+# def find_language(word):
+#     word = word.lower()
+#     languages = []
+#     for fid in udhr.fileids():
+#         if not fid.endswith("-Latin1"):
+#             continue
+#         tokens = [w.lower() for w in udhr.words(fid)]
+#         if word in tokens:
+#             languages.append(fid[:-7])
+#     return sorted(languages)
+# print(find_language("freedom"))
+
+# 2 What is the branching factor of the noun hypernym hierarchy? I.e., for every noun synset that has hyponyms—or children in the hypernym hierarchy—how many do they have on average? You can get all noun synsets using wn.all_synsets('n').
+
+from nltk.corpus import wordnet as wn
+#
+# noun_sysnet = list(wn.all_synsets('n'))
+# children = []
+#
+# for s in noun_sysnet:
+#     kids = s.hypernyms()
+#     if kids:
+#         children.append(len(kids))
+# avg_branching = sum(children)/len(children)
+#
+# print(len(noun_sysnet))
+# print(len(children))
+# print(avg_branching)
+
+#3 The polysemy of a word is the number of senses it has. Using WordNet, we can determine that the noun dog has seven senses with len(wn.synsets('dog', 'n')). Compute the average polysemy of nouns, verbs, adjectives, and adverbs according to WordNet.
+
+
+def average_polysemy(pos_tag):
+    lemmas = wn.all_lemma_names(pos=pos_tag)
+    lemmas = list(lemmas)
+
+    total_senses = 0
+    for w in lemmas:
+        total_senses += len(wn.synsets(w,pos=pos_tag))
+
+    return total_senses/len(lemmas)
+
+avg_n = average_polysemy('n')
+avg_v = average_polysemy('v')
+avg_a = average_polysemy('a')  # adjective
+avg_r = average_polysemy('r')  # adverb
+
+print("Average polysemy (nouns):", avg_n)
+print("Average polysemy (verbs):", avg_v)
+print("Average polysemy (adjectives):", avg_a)
+print("Average polysemy (adverbs):", avg_r)
