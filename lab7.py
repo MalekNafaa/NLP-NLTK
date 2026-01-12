@@ -132,44 +132,44 @@ from unicodedata import category
 # nltk.download('stopwords')
 # nltk.download('omw-1.4')
 
-
-documents = [(list(movie_reviews.words(fileid)),category)  for category in movie_reviews.categories() for fileid in movie_reviews.fileids(category)]
-random.shuffle(documents)
-
-lemmatizer = WordNetLemmatizer()
-
-def get_wordnet_features(word):
-    features = set()
-    word = word.lower()
-    lemma = lemmatizer.lemmatize(word)
-    features.add(lemma)
-
-    for syn in wordnet.synsets(word):
-        for l in syn.lemmas():
-            features.add(l.name().lower())
-
-        for hyper in syn.hypernyms():
-            for l in hyper.lemmas():
-                features.add(l.name().lower())
-    return features
-print(get_wordnet_features("wonderful"))
-
-stop_words = set(stopwords.words("english"))
-
-def document_features(document):
-    document_words = set(w.lower() for w in document if w.isalpha() and w.lower() not in stop_words)
-    features = {}
-
-    for word in document_words:
-        features[f'contains({word})'] = True
-
-        for related_word in get_wordnet_features(word):
-            features[f'contains_lexical({related_word})'] = True
-    return features
-
-featuressets = [(document_features(d),c) for (d,c) in documents]
-
-train_set , test_set = featuressets[100:],featuressets[:100]
-classifier = nltk.NaiveBayesClassifier.train(train_set)
-print("Accuracy:", nltk.classify.accuracy(classifier, test_set))
-classifier.show_most_informative_features(15)
+#
+# documents = [(list(movie_reviews.words(fileid)),category)  for category in movie_reviews.categories() for fileid in movie_reviews.fileids(category)]
+# random.shuffle(documents)
+#
+# lemmatizer = WordNetLemmatizer()
+#
+# def get_wordnet_features(word):
+#     features = set()
+#     word = word.lower()
+#     lemma = lemmatizer.lemmatize(word)
+#     features.add(lemma)
+#
+#     for syn in wordnet.synsets(word):
+#         for l in syn.lemmas():
+#             features.add(l.name().lower())
+#
+#         for hyper in syn.hypernyms():
+#             for l in hyper.lemmas():
+#                 features.add(l.name().lower())
+#     return features
+# print(get_wordnet_features("wonderful"))
+#
+# stop_words = set(stopwords.words("english"))
+#
+# def document_features(document):
+#     document_words = set(w.lower() for w in document if w.isalpha() and w.lower() not in stop_words)
+#     features = {}
+#
+#     for word in document_words:
+#         features[f'contains({word})'] = True
+#
+#         for related_word in get_wordnet_features(word):
+#             features[f'contains_lexical({related_word})'] = True
+#     return features
+#
+# featuressets = [(document_features(d),c) for (d,c) in documents]
+#
+# train_set , test_set = featuressets[100:],featuressets[:100]
+# classifier = nltk.NaiveBayesClassifier.train(train_set)
+# print("Accuracy:", nltk.classify.accuracy(classifier, test_set))
+# classifier.show_most_informative_features(15)

@@ -97,45 +97,45 @@ from nltk.tree import Tree
 #     print(i, print(cp.parse(test_sent)))
 
 #5. An early definition of chunk was the material that occurs between chinks. Develop a chunker that starts by putting the whole sentence in a single chunk, and then does the rest of its work solely by chinking. Determine which tags (or tag sequences) are most likely to make up chinks with the help of your own utility program. Compare the performance and simplicity of this approach relative to a chunker based entirely on chunk rules.
-
-train_sents = conll2000.chunked_sents("train.txt",chunk_types=["NP"])
-chink_tags = Counter()
-
-for sent in train_sents:
-    for word,pos in sent.pos():
-        for subtree in sent.subtrees():
-            if subtree.label() == "NP" and (word,pos) in subtree.leaves():
-                break
-        else:
-            chink_tags[pos] +=1
-
-print("most common")
-for tag,count in chink_tags.most_common(15):
-    print(f"{tag}:{count}")
-
-grammar = r"""
-    NP: {<.*>+}
-
-    }<IN|VB.*|MD|RB|TO|CC|,|\.>{
-"""
-
-chink_chunker = nltk.RegexpParser(grammar)
-test_sent = [("The","DT"), ("quick","JJ"), ("brown","JJ"), ("fox","NN"),
-             ("jumps","VBZ"), ("over","IN"), ("the","DT"), ("lazy","JJ"),
-             ("dog","NN"), (".",".")]
-
-print(chink_chunker.parse(test_sent))
-
-np_grammar = r"""
-    NP: {<DT>?<JJ.*>*<NN.*>+}
-        {<NNP>+}
-        {<PRP>}
-"""
-np_chunker = nltk.RegexpParser(np_grammar)
-test_sents = conll2000.chunked_sents("test.txt", chunk_types=["NP"])
-
-print("Chink-only chunker performance:")
-print(chink_chunker.evaluate(test_sents))
-
-print("\nGrammar NP chunker performance:")
-print(np_chunker.evaluate(test_sents))
+#
+# train_sents = conll2000.chunked_sents("train.txt",chunk_types=["NP"])
+# chink_tags = Counter()
+#
+# for sent in train_sents:
+#     for word,pos in sent.pos():
+#         for subtree in sent.subtrees():
+#             if subtree.label() == "NP" and (word,pos) in subtree.leaves():
+#                 break
+#         else:
+#             chink_tags[pos] +=1
+#
+# print("most common")
+# for tag,count in chink_tags.most_common(15):
+#     print(f"{tag}:{count}")
+#
+# grammar = r"""
+#     NP: {<.*>+}
+#
+#     }<IN|VB.*|MD|RB|TO|CC|,|\.>{
+# """
+#
+# chink_chunker = nltk.RegexpParser(grammar)
+# test_sent = [("The","DT"), ("quick","JJ"), ("brown","JJ"), ("fox","NN"),
+#              ("jumps","VBZ"), ("over","IN"), ("the","DT"), ("lazy","JJ"),
+#              ("dog","NN"), (".",".")]
+#
+# print(chink_chunker.parse(test_sent))
+#
+# np_grammar = r"""
+#     NP: {<DT>?<JJ.*>*<NN.*>+}
+#         {<NNP>+}
+#         {<PRP>}
+# """
+# np_chunker = nltk.RegexpParser(np_grammar)
+# test_sents = conll2000.chunked_sents("test.txt", chunk_types=["NP"])
+#
+# print("Chink-only chunker performance:")
+# print(chink_chunker.evaluate(test_sents))
+#
+# print("\nGrammar NP chunker performance:")
+# print(np_chunker.evaluate(test_sents))

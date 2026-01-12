@@ -36,20 +36,20 @@ model = api.load("glove-wiki-gigaword-50")
 #6
 # print(model.most_similar(positive=["king","queen"],negative=["man"])[0])
 #7
-def solve_analogy(word1,word2,words3):
-    return model.most_similar(positive=[word1,word2],negative=[words3])[0]
-# print(solve_analogy("king","queen","man"))
-#8
-words = ["king", "queen", "man", "woman", "child"]
-embedding = np.array([model[word] for word in words])
-#9
-pca = PCA(n_components=2)
-reduced_embedding = pca.fit_transform(embedding)
-print(reduced_embedding)
-#10
-plt.figure()
-for i,word in enumerate(words):
-    plt.scatter(reduced_embedding[i,0],reduced_embedding[i,1])
-    plt.text(reduced_embedding[i,0]+0.01,reduced_embedding[i,0],word)
-plt.title("word embedding visualization")
-plt.show()
+# def solve_analogy(word1,word2,words3):
+#     return model.most_similar(positive=[word1,word2],negative=[words3])[0]
+# # print(solve_analogy("king","queen","man"))
+# #8
+# words = ["king", "queen", "man", "woman", "child"]
+# embedding = np.array([model[word] for word in words])
+# #9
+# pca = PCA(n_components=2)
+# reduced_embedding = pca.fit_transform(embedding)
+# print(reduced_embedding)
+# #10
+# plt.figure()
+# for i,word in enumerate(words):
+#     plt.scatter(reduced_embedding[i,0],reduced_embedding[i,1])
+#     plt.text(reduced_embedding[i,0]+0.01,reduced_embedding[i,0],word)
+# plt.title("word embedding visualization")
+# plt.show()
